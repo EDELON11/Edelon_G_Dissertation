@@ -109,28 +109,11 @@ def calculate_prob_cancellations(hotelData_cancellations, requested_room_type,
    
    # print(f"Room:{requested_room_type} reserved in: {reservation_date_month} for season {arrival_date_season} with length of stay of {length_of_stay} nights, On a weekend? {weekend_friday}, IsSuite? {isSuite}, Adults = {na} Children = {nc}")
    probability = matching_reservations / total_reservations
-   # print(probability)
+
    return probability
 
 
-
-
-# calculate_probability(hotelData,"Comfort Room","January",True,"LS",2)
-# probability = calculate_probability(hotelData,"Comfort Room","June","VHS","CO",2,True)
+#Example
+# probability = calculate_prob_cancellations(hotelData_cancellations,"Comfort Room","November","SS",1,True,True,2,0)
 # print("Probability:", probability)
-# probability = calculate_prob_cancellations(hotelData_cancellations,"Comfort Room","January","LS",2,True,False,2,0)
-# print("Probability:", probability)
-probability = calculate_prob_cancellations(hotelData_cancellations,"Comfort Room","November","SS",1,True,True,2,0)
-print("Probability:", probability)
 
-
-
-
-# def getCancelledRooms(hotelData):
-#     count = 0
-#     for index, col in hotelData.iterrows():
-#         if(col[8] == "CC" or col[8] == "CI" or col[8]== "EX" or col[8]== "NS"):
-#             count+=1
-#         if(col[8] == "CO" and col[7] >=4):
-#             count+=1
-#     return count

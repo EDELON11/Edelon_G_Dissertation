@@ -9,7 +9,7 @@ start_time = time.time()
 # Import openyxl module
 
 # Define variable to load the workbook
-workbook = openpyxl.load_workbook("testData1.xlsx")
+workbook = openpyxl.load_workbook("testData_chap5.xlsx")
 
 # Define variable to read the active sheet:
 worksheet = workbook.active
@@ -23,25 +23,27 @@ for i in range(560):
     demands_to_8.append(0);
     
 Max_NumberOfLenght = 14
+
+#Arrival-Date can be changed from here
 a=1
     
-
+#Demands Function - Section 2.2.2.2 (Explained)
 for p in range(1, worksheet.max_row):
     for length in worksheet.iter_cols(4, 4):
-        for RoomType in worksheet.iter_cols(2, 2):
+        for Room_class in worksheet.iter_cols(2, 2):
             for adults in worksheet.iter_cols(5, 5):
                 for children in worksheet.iter_cols(6, 6):
                     
-                    if RoomType[p].value <= 3:
-                        demand_index = ((Max_NumberOfLenght * 3)*(RoomType[p].value-1))\
+                    if Room_class[p].value <= 3:
+                        demand_index = ((Max_NumberOfLenght * 3)*(Room_class[p].value-1))\
                             +(3*(length[p].value-1))+adults[p].value
                         if (adults[p].value == 1 and children[p].value == 0):
                             demand_index=demand_index-1
                         
                         demands[demand_index] = demands[demand_index]+1
                         
-                    elif RoomType[p].value >= 4 and RoomType[p].value <= 8 :
-                        demand_index = ((Max_NumberOfLenght * 8)*(RoomType[p].value-4)\
+                    elif Room_class[p].value >= 4 and Room_class[p].value <= 8 :
+                        demand_index = ((Max_NumberOfLenght * 8)*(Room_class[p].value-4)\
                                         +(8*(length[p].value-1))+(4*(adults[p].value-1)+children[p].value))
                         if (adults[p].value == 3 and children[p].value == 0):
                             demand_index=demand_index-1
@@ -78,7 +80,7 @@ def SpecificDemand(c,a,l,na,nc):
         return demands_to_8[demand_index]
     
 
-def GetBaseRate(RoomType):
+def GetBaseRate(Room_class):
     switcher={
         1:105,
         2:120,
@@ -90,9 +92,9 @@ def GetBaseRate(RoomType):
         8:240,
         }
     
-    return switcher.get(RoomType,"nothing")
+    return switcher.get(Room_class,"nothing")
         
-        
+#Explained in Section 2.2.2.3       
 def GetRev(c,l,na,nc):
     na= int(na);
     nc = int(nc);
@@ -157,7 +159,7 @@ for c in C:
     
 #Defining the constraints
                 
-#1
+# Constraint 1
 #upperbounds of the unallocated rooms
 for c in C:
     if c<=3:
@@ -166,8 +168,8 @@ for c in C:
         model.addConstr(grb.quicksum(x[c,a,l,n] for l in L for n in N2) <= ubs[c-1])
         
 
-#2
-#rooms allocated smaller than the demands 
+# Constraint 2
+#Rooms allocated smaller than the demands 
 for c in C:
     if c<=3:
         for l in L:
@@ -199,7 +201,7 @@ for c in C:
                     model.addConstr(x[c,a,l,n] <= SpecificDemand(c,a, l, 3, 0))
 
 
-# #Defining the objective function 
+#Defining the objective function 
 
 obj = 0
 for c in C:
@@ -251,8 +253,8 @@ for v in model.getVars():
     if v.x != 0:
         print(v.varName, v.x)
 
-# printing variable name followed by optimal value
 
+#Printing variable name followed by optimal value
 end_time = time.time()
 duration = end_time - start_time
 

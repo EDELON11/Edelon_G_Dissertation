@@ -1,8 +1,8 @@
 from datetime import datetime
 
+#Explained in Section 2.2.2.3
 
-
-def GetLowRate(RoomType):
+def GetLowRate(Room_class):
     switcher={
         1:90,
         2:105,
@@ -14,9 +14,9 @@ def GetLowRate(RoomType):
         8:230,
         }
     
-    return switcher.get(RoomType,"nothing")
+    return switcher.get(Room_class,"nothing")
 
-def GetShoulderRate(RoomType):
+def GetShoulderRate(Room_class):
     switcher={
         1:105,
         2:120,
@@ -28,9 +28,9 @@ def GetShoulderRate(RoomType):
         8:240,
         }
     
-    return switcher.get(RoomType,"nothing")
+    return switcher.get(Room_class,"nothing")
 
-def GetHighRate(RoomType):
+def GetHighRate(Room_class):
     switcher={
         1:120,
         2:135,
@@ -42,9 +42,9 @@ def GetHighRate(RoomType):
         8:250,
         }
     
-    return switcher.get(RoomType,"nothing")
+    return switcher.get(Room_class,"nothing")
 
-def GetVeryHighRate(RoomType):
+def GetVeryHighRate(Room_class):
     switcher={
         1:130,
         2:145,
@@ -56,7 +56,7 @@ def GetVeryHighRate(RoomType):
         8:260,
         }
     
-    return switcher.get(RoomType,"nothing")
+    return switcher.get(Room_class,"nothing")
 
 
 #dates of the seasons
@@ -126,7 +126,7 @@ def get_season(arrival_date):
 def GetRev(k):
     na= int(k.na);
     nc = int(k.nc);
-    c=int(k.getRoomType());
+    c=int(k.getRoomClass());
     l = int(k.length);
     numberpersons = na+nc;
     

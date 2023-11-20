@@ -8,7 +8,7 @@ start_time = time.time()
 
 # Open workbook from ExcelData
 
-workbook = openpyxl.load_workbook("testData10.xlsx")
+workbook = openpyxl.load_workbook("testData1_chap2.xlsx")
 
 # Define variable to read the active sheet:
 worksheet = workbook.active
@@ -32,17 +32,19 @@ for i in range(560*ArrivalDates):
     demands_to_8.append(0);
 
 
+#Demands Function - Section 2.2.2.6 (Explained)
+
 for p in range(1, worksheet.max_row):
     for length in worksheet.iter_cols(4, 4):
-        for RoomType in worksheet.iter_cols(2, 2):
+        for Room_class in worksheet.iter_cols(2, 2):
             for ArrivalDate in worksheet.iter_cols(3,3):
                 for adults in worksheet.iter_cols(5, 5):
                     for children in worksheet.iter_cols(6, 6):
                         
                         if ArrivalDate[p].value <= ArrivalDates and ArrivalDate[p].value>= StartDate:
                             
-                            if RoomType[p].value <= 3:
-                                demand_index = ((Max_NumberOfLenght * ArrivalDates * 3)*(RoomType[p].value-1))\
+                            if Room_class[p].value <= 3:
+                                demand_index = ((Max_NumberOfLenght * ArrivalDates * 3)*(Room_class[p].value-1))\
                                     +(3* ArrivalDates *(length[p].value-1))+adults[p].value + 3*(ArrivalDate[p].value-1)
                                 if (adults[p].value == 1 and children[p].value == 0):
                                     demand_index=demand_index-1
@@ -51,8 +53,8 @@ for p in range(1, worksheet.max_row):
                                 
                                 
                                 
-                            elif RoomType[p].value >= 4 and RoomType[p].value <= 8 :
-                                demand_index = ((Max_NumberOfLenght * ArrivalDates * 8)*(RoomType[p].value-4)\
+                            elif Room_class[p].value >= 4 and Room_class[p].value <= 8 :
+                                demand_index = ((Max_NumberOfLenght * ArrivalDates * 8)*(Room_class[p].value-4)\
                                                 +(8*ArrivalDates*(length[p].value-1))+(4*(adults[p].value-1)\
                                                 +children[p].value))+ 8*(ArrivalDate[p].value-1)
                                     
@@ -78,9 +80,9 @@ def SpecificDemand(c,a,l,na,nc):
         
         return demands_to_8[demand_index]
     
+#Season indicating its Room class & Base rate
 
-
-def GetLowRate(RoomType):
+def GetLowRate(Room_class):
     switcher={
         1:90,
         2:105,
@@ -92,9 +94,9 @@ def GetLowRate(RoomType):
         8:230,
         }
     
-    return switcher.get(RoomType,"nothing")
+    return switcher.get(Room_class,"nothing")
 
-def GetShoulderRate(RoomType):
+def GetShoulderRate(Room_class):
     switcher={
         1:105,
         2:120,
@@ -106,9 +108,9 @@ def GetShoulderRate(RoomType):
         8:240,
         }
     
-    return switcher.get(RoomType,"nothing")
+    return switcher.get(Room_class,"nothing")
 
-def GetHighRate(RoomType):
+def GetHighRate(Room_class):
     switcher={
         1:120,
         2:135,
@@ -120,9 +122,9 @@ def GetHighRate(RoomType):
         8:250,
         }
     
-    return switcher.get(RoomType,"nothing")
+    return switcher.get(Room_class,"nothing")
 
-def GetVeryHighRate(RoomType):
+def GetVeryHighRate(Room_class):
     switcher={
         1:130,
         2:145,
@@ -134,15 +136,15 @@ def GetVeryHighRate(RoomType):
         8:260,
         }
     
-    return switcher.get(RoomType,"nothing")
+    return switcher.get(Room_class,"nothing")
         
-        
+       
 def GetRev(c,a,l,na,nc):
     na= int(na);
     nc = int(nc);
     a = int(a);
     c=int(c);
-    numberpersons = na+nc;
+    number_of_persons = na+nc;
     
     #if in july and aug
     if a >= 182 and a<=243:
@@ -157,15 +159,15 @@ def GetRev(c,a,l,na,nc):
     elif (a>=1 and a<=6) or (a>=355 and a<=365) or (a>=274 and a<=304) or (a>=101 and a<=151):
         BaseRate = GetShoulderRate(c)
         
-    if numberpersons <=2:
+    if number_of_persons <=2:
         return l*BaseRate;
-    elif numberpersons > 2:
+    elif number_of_persons > 2:
         if na == 3:
             return (l*BaseRate)+((0.75*(0.5*BaseRate))*l);
         elif na == 2:
             return (l*BaseRate)+(l*((0.5*(0.5*BaseRate))*nc));
         elif na == 1:
-            return (l*BaseRate)+((0.5*(0.5*BaseRate))*(numberpersons-2)*l);
+            return (l*BaseRate)+((0.5*(0.5*BaseRate))*(number_of_persons-2)*l);
 
 #Defining the Model
 model = grb.Model(name='Revenue_Managment')
@@ -186,6 +188,7 @@ VariablesChosen=[]
 Revenue=[]
 
 
+#GetSum Function - Section 2.2.2.7 (Explained)
 def getSum(day_index,c):
     expr = 0
     counter = 1
